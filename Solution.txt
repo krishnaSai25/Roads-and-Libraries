@@ -1,0 +1,65 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int q = sc.nextInt();
+        for(int a = 0; a < q; a++){
+            int n = sc.nextInt();
+            int m = sc.nextInt();
+            int x = sc.nextInt();
+            int y = sc.nextInt();
+            HashMap<Integer,ArrayList<Integer>> graph = new HashMap<Integer,ArrayList<Integer>>();
+            for(int b = 0; b < m; b++){
+                int C1 = sc.nextInt();
+                int C2 = sc.nextInt();
+                if(graph.containsKey(C1)){
+                    graph.get(C1).add(C2);
+                }
+                else{
+                    ArrayList<Integer> task = new ArrayList<Integer>();
+                    task.add(C2);
+                    graph.put(C1,task);
+                }
+                if(graph.containsKey(C2)){
+                    graph.get(C2).add(C1);
+                }
+                else{
+                    ArrayList<Integer> task = new ArrayList<Integer>();
+                    task.add(C1);
+                    graph.put(C2,task);
+                }
+            }
+            
+            boolean[] visited = new boolean[n+1];
+            long totalCost = 0;
+            for(int i=1;i<=n;i++){
+                if(graph.containsKey(i) && visited[i] ==  false){
+                    visited[i] = true;
+                    int[] roads = new int[1];
+                    dfs(i,visited,graph,roads);
+                    totalCost += Math.min(roads[0]*y+x,(roads[0]+1)*x);
+                }
+                else if(!graph.containsKey(i)){
+                    totalCost += x;
+                }
+            }
+            System.out.println(totalCost);
+        }
+    }
+    
+    public static void dfs(int path,boolean[] visited,HashMap<Integer,ArrayList<Integer>> graph,int[] roads){
+        for(int task:graph.get(path)){
+            if(!visited[task]){
+                visited[task] = true;
+                roads[0]++;
+                dfs(task,visited,graph,roads);
+            }
+        }
+    }
+}
